@@ -1,9 +1,9 @@
-﻿using SchoolKursach.Scripts;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using SchoolKursach.Scripts;
 
-namespace SchoolKursach
+namespace SchoolKursach.Forms
 {
     public partial class Director : Form
     {
@@ -20,59 +20,48 @@ namespace SchoolKursach
 
         private void Director_Load(object sender, EventArgs e)
         {
+            // вывод приветствия пользователю
+            WelcomeLabel.Text = $"Здравствуйте, {Person.fio}";
+
+            // выключение поисковых груп боксов
+            SubjectSearchGroupBox.Enabled = false;
             ClassSearchGroupBox.Enabled = false;
-            SearchByLabel.Text = "Поиск по ученику";
+
+            SearchGroupBox.Text = "Поиск по ученику";
 
             // запрос на получение данных для комбобокса
-            var request = "select фио from Пользователи where [id должности] = 3";
+            var request = "select фио from Пользователи where [id должности] = 3 order by фио";
 
             comboBoxContent = DataFill.RequestToList(request);
 
             DataFill.UpdateComboBox(SearchComboBox, comboBoxContent, 0);
 
             // запрос на получение данных для вывода таблицы
-            request = "SELECT u.ФИО as Ученик, k.Буква, k.Класс, p.Предмет, o.Оценка " +
+            request = "SELECT u.ФИО as Ученик, k.Буква, k.Класс, p.Предмет, o.Оценка, Четверть " +
                 "FROM Пользователи u " +
                 "JOIN Ученики uc ON u.ID = uc.[ID Пользователя] " +
-                "JOIN Оценки o ON uc.ID = o.[ID Ученика] " +
-                "JOIN Экзамены e ON o.[ID Экзамена] = e.[ID] " +
+                "JOIN Оценки o ON uc.ID = o.[ID Ученика] and o.Экзамен = 1 " +
+                "JOIN План e ON o.[ID Плана] = e.[ID] " +
                 "JOIN Предметы p ON e.[ID предмета] = p.Id " +
                 "JOIN Классы k ON uc.[ID Класса] = k.ID";
 
             DataFill.UpdateDataGrid(DataTableView, request);
         }
 
-        private void NextTableButton_Click(object sender, EventArgs e)
-        {
-            tableId++;
-
-            UpdateTable();
-        }
-
-        private void PreviousTableButton_Click(object sender, EventArgs e)
-        {
-            tableId--;
-
-            UpdateTable();
-        }
-
-        private void ClearFilterButton_Click(object sender, EventArgs e)
-        {
-            UpdateTable();
-        }
-
         // вывод таблицы на основе значения tableId
-        private void UpdateTable()
+        private void ShowData()
         {
+            SubjectSearchGroupBox.Text = "";
+
             var tableRequest = "";
             var comboBoxRequest = "";
 
             if (tableId < 0)
             {
-                tableId = 2;
+                tableId = 4;
             }
 
-            if (tableId > 2)
+            if (tableId > 4)
             {
                 tableId = 0;
             }
@@ -90,6 +79,16 @@ namespace SchoolKursach
             {
                 ShowTeachers(out tableRequest, out comboBoxRequest);
             }
+            else if (tableId == 3)
+            {
+                ShowResults();
+                return;
+            }
+            else if (tableId == 4)
+            {
+                ShowSubjects();
+                return;
+            }
 
             DataFill.UpdateDataGrid(DataTableView, tableRequest);
 
@@ -98,47 +97,20 @@ namespace SchoolKursach
             DataFill.UpdateComboBox(SearchComboBox, comboBoxContent, 0);
         }
 
-        // вызов метода для выборки данных при изменении выбранного элемента в текстбоксах
-        private void LetterComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            var tableRequest = ShowClassesByFilter();
-
-            try
-            {
-                DataFill.UpdateDataGrid(DataTableView, tableRequest);
-            }
-            catch (Exception ex)
-            {
-                DataTableView.Columns.Clear();
-
-                MessageBox.Show(ex.Message, "Ошибка");
-            }
-        }
-
-        private void NumberComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            var tableRequest = ShowClassesByFilter();
-
-            try
-            {
-                DataFill.UpdateDataGrid(DataTableView, tableRequest);
-            }
-            catch (Exception ex)
-            {
-                DataTableView.Columns.Clear();
-
-                MessageBox.Show(ex.Message, "Ошибка");
-            }
-        }
-
-        private void SearchComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void ShowDataByFilter()
         {
             var tableRequest = "";
 
             if (tableId == 0)
                 tableRequest = ShowStudentsByFilter();
-            if (tableId == 2)
+            else if (tableId == 1)
+                tableRequest = ShowClassesByFilter();
+            else if (tableId == 2)
                 tableRequest = ShowTeachersByFilter();
+            else if (tableId == 3)
+                tableRequest = ShowResultsByFilter();
+            else if (tableId == 4)
+                tableRequest = ShowSubjectsByFilter();
 
             try
             {
@@ -146,6 +118,9 @@ namespace SchoolKursach
             }
             catch (Exception ex)
             {
+                if (tableId == 4)
+                    return;
+
                 DataTableView.Columns.Clear();
 
                 MessageBox.Show(ex.Message, "Ошибка");
@@ -156,39 +131,42 @@ namespace SchoolKursach
 
         private void ShowTeachers(out string tableRequest, out string comboBoxRequest)
         {
+            SubjectSearchGroupBox.Enabled = false;
             ClassSearchGroupBox.Enabled = false;
             SearchGroupBox.Enabled = true;
 
-            SearchByLabel.Text = "Поиск по преподавателю";
+            SearchGroupBox.Text = "Поиск по преподавателю";
 
             tableRequest = "select Пользователи.ФИО as Преподаватель, Предметы.Предмет, Классы.Буква, Классы.Класс " +
-                "from Пользователи, Предметы, Классы, Экзамены " +
-                "where Пользователи.[ID Должности] = 2 and Экзамены.[ID Учителя] = Пользователи.ID " +
-                "and Экзамены.[ID Предмета] = Предметы.ID and Экзамены.[ID Класса] = Классы.ID";
+                "from Пользователи, Предметы, Классы, План " +
+                "where Пользователи.[ID Должности] = 2 and План.[ID Учителя] = Пользователи.ID " +
+                "and План.[ID Предмета] = Предметы.ID and План.[ID Класса] = Классы.ID";
 
-            comboBoxRequest = "select фио from Пользователи where [id должности] = 2";
+            comboBoxRequest = "select фио from Пользователи where [id должности] = 2 order by фио";
         }
 
         private void ShowStudents(out string tableRequest, out string comboBoxRequest)
         {
+            SubjectSearchGroupBox.Enabled = false;
             ClassSearchGroupBox.Enabled = false;
             SearchGroupBox.Enabled = true;
 
-            SearchByLabel.Text = "Поиск по ученику";
+            SearchGroupBox.Text = "Поиск по ученику";
 
-            tableRequest = "select u.фио as Ученик, k.Буква, k.Класс, p.Предмет, o.Оценка " +
+            tableRequest = "select u.фио as Ученик, k.Буква, k.Класс, p.Предмет, o.Оценка, Четверть " +
                 "from Пользователи u " +
                 "join Ученики uc on u.ID = uc.[ID Пользователя] " +
                 "join Оценки o on uc.ID = o.[ID Ученика] " +
-                "join Экзамены e on o.[ID Экзамена] = e.[ID] " +
+                "join План e on o.[ID Плана] = e.[ID] and o.Экзамен = 1 " +
                 "join Предметы p on e.[ID предмета] = p.Id " +
                 "join Классы k on uc.[ID Класса] = k.ID";
 
-            comboBoxRequest = "select фио from Пользователи where [id должности] = 3";
+            comboBoxRequest = "select фио from Пользователи where [id должности] = 3 order by фио";
         }
 
         private void ShowClasses()
         {
+            SubjectSearchGroupBox.Enabled = false;
             ClassSearchGroupBox.Enabled = true;
             SearchGroupBox.Enabled = false;
 
@@ -208,37 +186,109 @@ namespace SchoolKursach
             DataFill.UpdateDataGrid(DataTableView, tableRequest);
         }
 
+        private void ShowResults()
+        {
+            SubjectSearchGroupBox.Enabled = false;
+            ClassSearchGroupBox.Enabled = true;
+            SearchGroupBox.Enabled = false;
+
+            var tableRequest = "SELECT Пользователи.ФИО as 'Ученик', Предметы.Предмет, Класс, Буква," +
+                "AVG(CASE WHEN Экзамен = 1 THEN Оценка ELSE NULL END) AS 'Средний балл по экзамену', " +
+                "AVG(CASE WHEN Экзамен = 0 THEN Оценка ELSE NULL END) AS 'Средний балл за четверть' " +
+                "FROM Оценки " +
+                "JOIN Ученики ON Оценки.[ID Ученика] = Ученики.ID " +
+                "JOIN Пользователи ON Ученики.[ID Пользователя] = Пользователи.ID " +
+                "JOIN План ON Оценки.[ID Плана] = План.ID " +
+                "JOIN Предметы ON План.[ID предмета] = Предметы.ID " +
+                "JOIN Классы ON Ученики.[ID Класса] = Классы.ID " +
+                "GROUP BY Ученики.ID, Пользователи.ФИО, Предметы.Предмет, Класс, Буква";
+
+            var letterComboBoxRequest = "Select distinct Буква from Классы";
+            var numberComboBoxRequest = "Select distinct Класс from Классы";
+
+            comboBoxContent = DataFill.RequestToList(letterComboBoxRequest);
+            additionalComboBoxContent = DataFill.RequestToList(numberComboBoxRequest);
+
+            DataFill.UpdateComboBox(LetterComboBox, comboBoxContent, 0);
+            DataFill.UpdateComboBox(NumberComboBox, additionalComboBoxContent, 0);
+
+            DataFill.UpdateDataGrid(DataTableView, tableRequest);
+        }
+
+        private void ShowSubjects()
+        {
+            SubjectSearchGroupBox.Enabled = true;
+            ClassSearchGroupBox.Enabled = false;
+            SearchGroupBox.Enabled = false;
+
+            SearchGroupBox.Text = "Поиск по преподавателю";
+
+            var tableRequest = $"SELECT Предмет, [Количество часов] FROM Предметы ";
+
+            DataFill.UpdateDataGrid(DataTableView, tableRequest);
+        }
+
+
         #endregion
 
         #region Show By Filter
 
         private string ShowStudentsByFilter()
         {
-            var request = $"SELECT u.ФИО as Ученик, k.Буква, k.Класс, p.Предмет, o.Оценка " +
+            var fio = comboBoxContent[SearchComboBox.SelectedIndex][0];
+
+            var request = $"SELECT u.ФИО as Ученик, k.Буква, k.Класс, p.Предмет, o.Оценка, Четверть " +
                 $"FROM Пользователи u " +
                 $"JOIN Ученики uc ON u.ID = uc.[ID Пользователя] " +
                 $"JOIN Оценки o ON uc.ID = o.[ID Ученика] " +
-                $"JOIN Экзамены e ON o.[ID Экзамена] = e.[ID] " +
+                $"JOIN План e ON o.[ID Плана] = e.[ID] and o.Экзамен = 1 " +
                 $"JOIN Предметы p ON e.[ID предмета] = p.Id " +
                 $"JOIN Классы k ON uc.[ID Класса] = k.ID " +
-                $"WHERE u.ФИО = '{comboBoxContent[SearchComboBox.SelectedIndex][0]}'";
+                $"WHERE u.ФИО = '{fio}'";
 
             return request;
         }
 
         private string ShowClassesByFilter()
         {
-
             // тернарный оператор ?. Если значение SelectedItem != null, то в переменную записывается значение из комбобокса.
             // В противном случае в нее записывается null
             var letter = LetterComboBox.SelectedItem != null ? comboBoxContent[LetterComboBox.SelectedIndex][0] : null;
             var number = NumberComboBox.SelectedItem != null ? additionalComboBoxContent[NumberComboBox.SelectedIndex][0] : null;
 
-            // на основе значений переменных, при помощи тернарного оператора изменяется запрос 
+            // на основе значений переменных, при помощи тернарного оператора cоздаются фильтры 
+            var letterFilter = letter != null ? $"Классы.Буква = '{letter}'" : "1=1";
+            var numberFilter = number != null ? $"Классы.Класс = {number}" : "1=1";
+
             var tableRequest = $"select distinct Пользователи.Фио, Классы.Буква, Классы.Класс from Пользователи, Классы, Ученики " +
-                $"where Пользователи.ID = Ученики.[ID Пользователя] and Ученики.[ID Класса] = Классы.ID " +
-                $"{(letter != null ? $"and Классы.Буква = '{letter}'" : "")} " +
-                $"{(number != null ? $"and Классы.Класс = {number}" : "")}";
+                $"where Пользователи.ID = Ученики.[ID Пользователя] and Ученики.[ID Класса] = Классы.ID and " +
+                $"{letterFilter} and {numberFilter}";
+
+            return tableRequest;
+        }
+
+        private string ShowResultsByFilter()
+        {
+            // тернарный оператор ?. Если значение SelectedItem != null, то в переменную записывается значение из комбобокса.
+            // В противном случае в нее записывается null
+            var letter = LetterComboBox.SelectedItem != null ? comboBoxContent[LetterComboBox.SelectedIndex][0] : null;
+            var number = NumberComboBox.SelectedItem != null ? additionalComboBoxContent[NumberComboBox.SelectedIndex][0] : null;
+
+            // на основе значений переменных, при помощи тернарного оператора cоздаются фильтры 
+            var letterFilter = letter != null ? $"Классы.Буква = '{letter}'" : "1=1";
+            var numberFilter = number != null ? $"Классы.Класс = {number}" : "1=1";
+
+            var tableRequest = $"SELECT Пользователи.ФИО AS 'Ученик', Предметы.Предмет, Класс, Буква, " +
+                $"AVG(CASE WHEN Экзамен = 1 THEN Оценка ELSE NULL END) AS 'Средний балл по экзамену', " +
+                $"AVG(CASE WHEN Экзамен = 0 THEN Оценка ELSE NULL END) AS 'Средний балл за четверть' " +
+                $"FROM Оценки " +
+                $"JOIN Ученики ON Оценки.[ID Ученика] = Ученики.ID " +
+                $"JOIN Пользователи ON Ученики.[ID Пользователя] = Пользователи.ID " +
+                $"JOIN План ON Оценки.[ID Плана] = План.ID " +
+                $"JOIN Предметы ON План.[ID предмета] = Предметы.ID " +
+                $"JOIN Классы ON Ученики.[ID Класса] = Классы.ID " +
+                $"WHERE {numberFilter} AND {letterFilter} " +
+                $"GROUP BY Ученики.ID, Пользователи.ФИО, Предметы.Предмет, Класс, Буква ";
 
             return tableRequest;
         }
@@ -248,13 +298,54 @@ namespace SchoolKursach
             var fio = comboBoxContent[SearchComboBox.SelectedIndex][0];
 
             var request = "select Пользователи.ФИО as Преподаватель, Предметы.Предмет, Классы.Буква, Классы.Класс " +
-                "from Пользователи, Предметы, Классы, Экзамены " +
-                "where Пользователи.[ID Должности] = 2 and Экзамены.[ID Учителя] = Пользователи.ID " +
-                $"and Экзамены.[ID Предмета] = Предметы.ID and Экзамены.[ID Класса] = Классы.ID and Пользователи.фио = '{fio}'";
+                "from Пользователи, Предметы, Классы, План " +
+                "where Пользователи.[ID Должности] = 2 and План.[ID Учителя] = Пользователи.ID " +
+                $"and План.[ID Предмета] = Предметы.ID and План.[ID Класса] = Классы.ID and Пользователи.фио = '{fio}'";
+
+            return request;
+        }
+
+        private string ShowSubjectsByFilter()
+        {
+            var searchQuery = SubjectNameTextBox.Text;
+
+            var request = $"SELECT Предмет, [Количество часов] FROM Предметы WHERE Предмет LIKE '%{searchQuery}%'";
 
             return request;
         }
 
         #endregion
+
+        // вызов метода для выборки данных при изменении выбранного элемента в комбобоксах
+        private void LetterComboBox_SelectedIndexChanged(object sender, EventArgs e) =>  ShowDataByFilter();
+        private void NumberComboBox_SelectedIndexChanged(object sender, EventArgs e) =>  ShowDataByFilter();
+        private void SearchComboBox_SelectedIndexChanged(object sender, EventArgs e) =>  ShowDataByFilter();
+
+        private void SubjectNameTextBox_KeyPress(object sender, KeyPressEventArgs e) => ShowDataByFilter();
+
+        // вывод таблицы без фильтров
+        private void ClearFilterButton_Click(object sender, EventArgs e) => ShowData();
+
+        // предыдущая таблица
+        private void NextTableButton_Click(object sender, EventArgs e)
+        {
+            tableId++;
+            ShowData();
+        }
+        
+        // следующая таблица
+        private void PreviousTableButton_Click(object sender, EventArgs e)
+        {
+            tableId--;
+            ShowData();
+        }
+
+        // выход с формы
+        private void ExitButton_Click(object sender, EventArgs e)
+        {
+            var form = new Auth();
+            form.Show();
+            Hide();
+        }
     }
 }

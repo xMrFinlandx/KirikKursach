@@ -1,5 +1,5 @@
 ﻿
-namespace SchoolKursach
+namespace SchoolKursach.Forms
 {
     partial class Director
     {
@@ -34,16 +34,21 @@ namespace SchoolKursach
             this.DataTableView = new System.Windows.Forms.DataGridView();
             this.SearchGroupBox = new System.Windows.Forms.GroupBox();
             this.SearchComboBox = new System.Windows.Forms.ComboBox();
-            this.SearchByLabel = new System.Windows.Forms.Label();
             this.ClearFilterButton = new System.Windows.Forms.Button();
             this.LetterComboBox = new System.Windows.Forms.ComboBox();
             this.NumberComboBox = new System.Windows.Forms.ComboBox();
             this.ClassSearchGroupBox = new System.Windows.Forms.GroupBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.SubjectSearchGroupBox = new System.Windows.Forms.GroupBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.SubjectNameTextBox = new System.Windows.Forms.TextBox();
+            this.WelcomeLabel = new System.Windows.Forms.Label();
+            this.ExitButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.DataTableView)).BeginInit();
             this.SearchGroupBox.SuspendLayout();
             this.ClassSearchGroupBox.SuspendLayout();
+            this.SubjectSearchGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // NextTableButton
@@ -72,6 +77,7 @@ namespace SchoolKursach
             this.DataTableView.AllowUserToDeleteRows = false;
             this.DataTableView.AllowUserToOrderColumns = true;
             this.DataTableView.AllowUserToResizeRows = false;
+            this.DataTableView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.DataTableView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.DataTableView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.DataTableView.Location = new System.Drawing.Point(249, 32);
@@ -85,10 +91,9 @@ namespace SchoolKursach
             // SearchGroupBox
             // 
             this.SearchGroupBox.Controls.Add(this.SearchComboBox);
-            this.SearchGroupBox.Controls.Add(this.SearchByLabel);
             this.SearchGroupBox.Location = new System.Drawing.Point(23, 42);
             this.SearchGroupBox.Name = "SearchGroupBox";
-            this.SearchGroupBox.Size = new System.Drawing.Size(200, 65);
+            this.SearchGroupBox.Size = new System.Drawing.Size(204, 65);
             this.SearchGroupBox.TabIndex = 3;
             this.SearchGroupBox.TabStop = false;
             this.SearchGroupBox.Text = "Поиск";
@@ -97,24 +102,15 @@ namespace SchoolKursach
             // 
             this.SearchComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.SearchComboBox.FormattingEnabled = true;
-            this.SearchComboBox.Location = new System.Drawing.Point(6, 32);
+            this.SearchComboBox.Location = new System.Drawing.Point(10, 32);
             this.SearchComboBox.Name = "SearchComboBox";
-            this.SearchComboBox.Size = new System.Drawing.Size(188, 21);
+            this.SearchComboBox.Size = new System.Drawing.Size(184, 21);
             this.SearchComboBox.TabIndex = 2;
             this.SearchComboBox.SelectedIndexChanged += new System.EventHandler(this.SearchComboBox_SelectedIndexChanged);
             // 
-            // SearchByLabel
-            // 
-            this.SearchByLabel.AutoSize = true;
-            this.SearchByLabel.Location = new System.Drawing.Point(7, 16);
-            this.SearchByLabel.Name = "SearchByLabel";
-            this.SearchByLabel.Size = new System.Drawing.Size(70, 13);
-            this.SearchByLabel.TabIndex = 1;
-            this.SearchByLabel.Text = "поле поиска";
-            // 
             // ClearFilterButton
             // 
-            this.ClearFilterButton.Location = new System.Drawing.Point(50, 375);
+            this.ClearFilterButton.Location = new System.Drawing.Point(47, 275);
             this.ClearFilterButton.Name = "ClearFilterButton";
             this.ClearFilterButton.Size = new System.Drawing.Size(157, 23);
             this.ClearFilterButton.TabIndex = 4;
@@ -136,7 +132,7 @@ namespace SchoolKursach
             // 
             this.NumberComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.NumberComboBox.FormattingEnabled = true;
-            this.NumberComboBox.Location = new System.Drawing.Point(113, 33);
+            this.NumberComboBox.Location = new System.Drawing.Point(123, 33);
             this.NumberComboBox.Name = "NumberComboBox";
             this.NumberComboBox.Size = new System.Drawing.Size(71, 21);
             this.NumberComboBox.TabIndex = 6;
@@ -150,7 +146,7 @@ namespace SchoolKursach
             this.ClassSearchGroupBox.Controls.Add(this.LetterComboBox);
             this.ClassSearchGroupBox.Location = new System.Drawing.Point(23, 113);
             this.ClassSearchGroupBox.Name = "ClassSearchGroupBox";
-            this.ClassSearchGroupBox.Size = new System.Drawing.Size(200, 68);
+            this.ClassSearchGroupBox.Size = new System.Drawing.Size(204, 68);
             this.ClassSearchGroupBox.TabIndex = 5;
             this.ClassSearchGroupBox.TabStop = false;
             this.ClassSearchGroupBox.Text = "Поиск по классу";
@@ -158,7 +154,7 @@ namespace SchoolKursach
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(110, 17);
+            this.label2.Location = new System.Drawing.Point(120, 16);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(41, 13);
             this.label2.TabIndex = 7;
@@ -173,26 +169,79 @@ namespace SchoolKursach
             this.label1.TabIndex = 1;
             this.label1.Text = "Буква";
             // 
+            // SubjectSearchGroupBox
+            // 
+            this.SubjectSearchGroupBox.Controls.Add(this.label3);
+            this.SubjectSearchGroupBox.Controls.Add(this.SubjectNameTextBox);
+            this.SubjectSearchGroupBox.Location = new System.Drawing.Point(23, 187);
+            this.SubjectSearchGroupBox.Name = "SubjectSearchGroupBox";
+            this.SubjectSearchGroupBox.Size = new System.Drawing.Size(204, 68);
+            this.SubjectSearchGroupBox.TabIndex = 8;
+            this.SubjectSearchGroupBox.TabStop = false;
+            this.SubjectSearchGroupBox.Text = "Поиск по названию";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(7, 16);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(109, 13);
+            this.label3.TabIndex = 8;
+            this.label3.Text = "Название предмета";
+            // 
+            // SubjectNameTextBox
+            // 
+            this.SubjectNameTextBox.Location = new System.Drawing.Point(10, 32);
+            this.SubjectNameTextBox.Name = "SubjectNameTextBox";
+            this.SubjectNameTextBox.Size = new System.Drawing.Size(184, 20);
+            this.SubjectNameTextBox.TabIndex = 0;
+            this.SubjectNameTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.SubjectNameTextBox_KeyPress);
+            // 
+            // WelcomeLabel
+            // 
+            this.WelcomeLabel.AutoSize = true;
+            this.WelcomeLabel.Location = new System.Drawing.Point(20, 9);
+            this.WelcomeLabel.Name = "WelcomeLabel";
+            this.WelcomeLabel.Size = new System.Drawing.Size(35, 13);
+            this.WelcomeLabel.TabIndex = 9;
+            this.WelcomeLabel.Text = "label4";
+            // 
+            // ExitButton
+            // 
+            this.ExitButton.Location = new System.Drawing.Point(23, 415);
+            this.ExitButton.Name = "ExitButton";
+            this.ExitButton.Size = new System.Drawing.Size(75, 23);
+            this.ExitButton.TabIndex = 10;
+            this.ExitButton.Text = "Выйти";
+            this.ExitButton.UseVisualStyleBackColor = true;
+            this.ExitButton.Click += new System.EventHandler(this.ExitButton_Click);
+            // 
             // Director
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(998, 450);
+            this.Controls.Add(this.ExitButton);
+            this.Controls.Add(this.WelcomeLabel);
+            this.Controls.Add(this.SubjectSearchGroupBox);
             this.Controls.Add(this.ClearFilterButton);
             this.Controls.Add(this.ClassSearchGroupBox);
             this.Controls.Add(this.SearchGroupBox);
             this.Controls.Add(this.DataTableView);
             this.Controls.Add(this.PreviousTableButton);
             this.Controls.Add(this.NextTableButton);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "Director";
             this.Text = "Director";
             this.Load += new System.EventHandler(this.Director_Load);
             ((System.ComponentModel.ISupportInitialize)(this.DataTableView)).EndInit();
             this.SearchGroupBox.ResumeLayout(false);
-            this.SearchGroupBox.PerformLayout();
             this.ClassSearchGroupBox.ResumeLayout(false);
             this.ClassSearchGroupBox.PerformLayout();
+            this.SubjectSearchGroupBox.ResumeLayout(false);
+            this.SubjectSearchGroupBox.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -203,12 +252,16 @@ namespace SchoolKursach
         private System.Windows.Forms.DataGridView DataTableView;
         private System.Windows.Forms.GroupBox SearchGroupBox;
         private System.Windows.Forms.ComboBox SearchComboBox;
-        private System.Windows.Forms.Label SearchByLabel;
         private System.Windows.Forms.Button ClearFilterButton;
         private System.Windows.Forms.ComboBox LetterComboBox;
         private System.Windows.Forms.ComboBox NumberComboBox;
         private System.Windows.Forms.GroupBox ClassSearchGroupBox;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.GroupBox SubjectSearchGroupBox;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox SubjectNameTextBox;
+        private System.Windows.Forms.Label WelcomeLabel;
+        private System.Windows.Forms.Button ExitButton;
     }
 }

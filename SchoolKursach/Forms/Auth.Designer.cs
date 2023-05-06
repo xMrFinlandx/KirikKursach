@@ -1,5 +1,5 @@
 ﻿
-namespace SchoolKursach
+namespace SchoolKursach.Forms
 {
     partial class Auth
     {
@@ -66,6 +66,7 @@ namespace SchoolKursach
             this.Controls.Add(this.LogInButton);
             this.Controls.Add(this.PassTextBox);
             this.Controls.Add(this.LoginTextBox);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "Auth";
             this.Text = "Auth";
             this.Load += new System.EventHandler(this.Auth_Load);
