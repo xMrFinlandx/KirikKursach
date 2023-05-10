@@ -45,6 +45,8 @@ namespace SchoolKursach.Forms
             this.SubjectNameTextBox = new System.Windows.Forms.TextBox();
             this.WelcomeLabel = new System.Windows.Forms.Label();
             this.ExitButton = new System.Windows.Forms.Button();
+            this.AddChangesButton = new System.Windows.Forms.Button();
+            this.TableNameLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.DataTableView)).BeginInit();
             this.SearchGroupBox.SuspendLayout();
             this.ClassSearchGroupBox.SuspendLayout();
@@ -53,22 +55,24 @@ namespace SchoolKursach.Forms
             // 
             // NextTableButton
             // 
+            this.NextTableButton.BackColor = System.Drawing.Color.LightGoldenrodYellow;
             this.NextTableButton.Location = new System.Drawing.Point(829, 415);
             this.NextTableButton.Name = "NextTableButton";
             this.NextTableButton.Size = new System.Drawing.Size(157, 23);
             this.NextTableButton.TabIndex = 0;
             this.NextTableButton.Text = "Следующая таблица";
-            this.NextTableButton.UseVisualStyleBackColor = true;
+            this.NextTableButton.UseVisualStyleBackColor = false;
             this.NextTableButton.Click += new System.EventHandler(this.NextTableButton_Click);
             // 
             // PreviousTableButton
             // 
+            this.PreviousTableButton.BackColor = System.Drawing.Color.LightGoldenrodYellow;
             this.PreviousTableButton.Location = new System.Drawing.Point(249, 415);
             this.PreviousTableButton.Name = "PreviousTableButton";
             this.PreviousTableButton.Size = new System.Drawing.Size(157, 23);
             this.PreviousTableButton.TabIndex = 1;
             this.PreviousTableButton.Text = "Предыдущая таблица";
-            this.PreviousTableButton.UseVisualStyleBackColor = true;
+            this.PreviousTableButton.UseVisualStyleBackColor = false;
             this.PreviousTableButton.Click += new System.EventHandler(this.PreviousTableButton_Click);
             // 
             // DataTableView
@@ -110,12 +114,13 @@ namespace SchoolKursach.Forms
             // 
             // ClearFilterButton
             // 
-            this.ClearFilterButton.Location = new System.Drawing.Point(47, 275);
+            this.ClearFilterButton.BackColor = System.Drawing.Color.LightGoldenrodYellow;
+            this.ClearFilterButton.Location = new System.Drawing.Point(47, 116);
             this.ClearFilterButton.Name = "ClearFilterButton";
             this.ClearFilterButton.Size = new System.Drawing.Size(157, 23);
             this.ClearFilterButton.TabIndex = 4;
             this.ClearFilterButton.Text = "Очистить фильтры";
-            this.ClearFilterButton.UseVisualStyleBackColor = true;
+            this.ClearFilterButton.UseVisualStyleBackColor = false;
             this.ClearFilterButton.Click += new System.EventHandler(this.ClearFilterButton_Click);
             // 
             // LetterComboBox
@@ -144,7 +149,7 @@ namespace SchoolKursach.Forms
             this.ClassSearchGroupBox.Controls.Add(this.NumberComboBox);
             this.ClassSearchGroupBox.Controls.Add(this.label1);
             this.ClassSearchGroupBox.Controls.Add(this.LetterComboBox);
-            this.ClassSearchGroupBox.Location = new System.Drawing.Point(23, 113);
+            this.ClassSearchGroupBox.Location = new System.Drawing.Point(23, 42);
             this.ClassSearchGroupBox.Name = "ClassSearchGroupBox";
             this.ClassSearchGroupBox.Size = new System.Drawing.Size(204, 68);
             this.ClassSearchGroupBox.TabIndex = 5;
@@ -173,7 +178,7 @@ namespace SchoolKursach.Forms
             // 
             this.SubjectSearchGroupBox.Controls.Add(this.label3);
             this.SubjectSearchGroupBox.Controls.Add(this.SubjectNameTextBox);
-            this.SubjectSearchGroupBox.Location = new System.Drawing.Point(23, 187);
+            this.SubjectSearchGroupBox.Location = new System.Drawing.Point(23, 42);
             this.SubjectSearchGroupBox.Name = "SubjectSearchGroupBox";
             this.SubjectSearchGroupBox.Size = new System.Drawing.Size(204, 68);
             this.SubjectSearchGroupBox.TabIndex = 8;
@@ -192,6 +197,7 @@ namespace SchoolKursach.Forms
             // SubjectNameTextBox
             // 
             this.SubjectNameTextBox.Location = new System.Drawing.Point(10, 32);
+            this.SubjectNameTextBox.MaxLength = 100;
             this.SubjectNameTextBox.Name = "SubjectNameTextBox";
             this.SubjectNameTextBox.Size = new System.Drawing.Size(184, 20);
             this.SubjectNameTextBox.TabIndex = 0;
@@ -208,19 +214,43 @@ namespace SchoolKursach.Forms
             // 
             // ExitButton
             // 
+            this.ExitButton.BackColor = System.Drawing.Color.LightGoldenrodYellow;
             this.ExitButton.Location = new System.Drawing.Point(23, 415);
             this.ExitButton.Name = "ExitButton";
             this.ExitButton.Size = new System.Drawing.Size(75, 23);
             this.ExitButton.TabIndex = 10;
             this.ExitButton.Text = "Выйти";
-            this.ExitButton.UseVisualStyleBackColor = true;
+            this.ExitButton.UseVisualStyleBackColor = false;
             this.ExitButton.Click += new System.EventHandler(this.ExitButton_Click);
+            // 
+            // AddChangesButton
+            // 
+            this.AddChangesButton.BackColor = System.Drawing.Color.LightGoldenrodYellow;
+            this.AddChangesButton.Location = new System.Drawing.Point(47, 175);
+            this.AddChangesButton.Name = "AddChangesButton";
+            this.AddChangesButton.Size = new System.Drawing.Size(157, 35);
+            this.AddChangesButton.TabIndex = 11;
+            this.AddChangesButton.Text = "Внести изменения";
+            this.AddChangesButton.UseVisualStyleBackColor = false;
+            this.AddChangesButton.Click += new System.EventHandler(this.AddChangesButton_Click);
+            // 
+            // TableNameLabel
+            // 
+            this.TableNameLabel.AutoSize = true;
+            this.TableNameLabel.Location = new System.Drawing.Point(246, 16);
+            this.TableNameLabel.Name = "TableNameLabel";
+            this.TableNameLabel.Size = new System.Drawing.Size(35, 13);
+            this.TableNameLabel.TabIndex = 12;
+            this.TableNameLabel.Text = "label4";
             // 
             // Director
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.LightCyan;
             this.ClientSize = new System.Drawing.Size(998, 450);
+            this.Controls.Add(this.TableNameLabel);
+            this.Controls.Add(this.AddChangesButton);
             this.Controls.Add(this.ExitButton);
             this.Controls.Add(this.WelcomeLabel);
             this.Controls.Add(this.SubjectSearchGroupBox);
@@ -232,7 +262,7 @@ namespace SchoolKursach.Forms
             this.Controls.Add(this.NextTableButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "Director";
-            this.Text = "Director";
+            this.Text = "Директор";
             this.Load += new System.EventHandler(this.Director_Load);
             ((System.ComponentModel.ISupportInitialize)(this.DataTableView)).EndInit();
             this.SearchGroupBox.ResumeLayout(false);
@@ -263,5 +293,7 @@ namespace SchoolKursach.Forms
         private System.Windows.Forms.TextBox SubjectNameTextBox;
         private System.Windows.Forms.Label WelcomeLabel;
         private System.Windows.Forms.Button ExitButton;
+        private System.Windows.Forms.Button AddChangesButton;
+        private System.Windows.Forms.Label TableNameLabel;
     }
 }

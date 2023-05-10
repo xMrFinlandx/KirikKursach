@@ -30,9 +30,6 @@ namespace SchoolKursach.Forms
             // передача логина и пароля в метод, который вернет ID должности 
             var roleId = GetRoleID(login, pass);
 
-            if (roleId == -1)
-                return;
-
             // Открытие формы на основе Id работника и закрытие текущей
             if (roleId == 1)
             {
@@ -82,17 +79,19 @@ namespace SchoolKursach.Forms
 
                 var reader = command.ExecuteReader();
 
+                var roleId = -1;
+
                 // запись полученных данных в статический класс
                 while (reader.Read())
                 {
                     Person.id = reader.GetValue(0).ToString();
                     Person.roleId = reader.GetValue(1).ToString();
                     Person.fio = (string)reader.GetValue(2);
+
+                    roleId = Convert.ToInt32(Person.roleId);
                 }
 
                 Connection.CloseConnection();
-
-                var roleId = Convert.ToInt32(Person.roleId);
 
                 return roleId;
             }

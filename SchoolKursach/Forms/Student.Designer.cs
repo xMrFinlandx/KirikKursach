@@ -108,28 +108,31 @@ namespace SchoolKursach.Forms
             // 
             // ClearFilterButton
             // 
+            this.ClearFilterButton.BackColor = System.Drawing.Color.LightGoldenrodYellow;
             this.ClearFilterButton.Location = new System.Drawing.Point(33, 151);
             this.ClearFilterButton.Name = "ClearFilterButton";
             this.ClearFilterButton.Size = new System.Drawing.Size(157, 23);
             this.ClearFilterButton.TabIndex = 5;
             this.ClearFilterButton.Text = "Очистить фильтры";
-            this.ClearFilterButton.UseVisualStyleBackColor = true;
+            this.ClearFilterButton.UseVisualStyleBackColor = false;
             this.ClearFilterButton.Click += new System.EventHandler(this.ClearFilterButton_Click);
             // 
             // ExitButton
             // 
+            this.ExitButton.BackColor = System.Drawing.Color.LightGoldenrodYellow;
             this.ExitButton.Location = new System.Drawing.Point(12, 342);
             this.ExitButton.Name = "ExitButton";
             this.ExitButton.Size = new System.Drawing.Size(75, 23);
             this.ExitButton.TabIndex = 11;
             this.ExitButton.Text = "Выйти";
-            this.ExitButton.UseVisualStyleBackColor = true;
+            this.ExitButton.UseVisualStyleBackColor = false;
             this.ExitButton.Click += new System.EventHandler(this.ExitButton_Click);
             // 
             // Student
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.LightCyan;
             this.ClientSize = new System.Drawing.Size(926, 377);
             this.Controls.Add(this.ExitButton);
             this.Controls.Add(this.ClearFilterButton);
@@ -138,7 +141,7 @@ namespace SchoolKursach.Forms
             this.Controls.Add(this.WelcomeLabel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "Student";
-            this.Text = "Student";
+            this.Text = "Ученик";
             this.Load += new System.EventHandler(this.Student_Load);
             ((System.ComponentModel.ISupportInitialize)(this.DataTableView)).EndInit();
             this.groupBox1.ResumeLayout(false);
