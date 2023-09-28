@@ -7,37 +7,32 @@ namespace SchoolKursach.Forms
 {
     public partial class Student : Form
     {
-        List<string[]> comboBoxContent = new List<string[]>();
-        string studentFio;
+        private List<string[]> _comboBoxContent = new List<string[]>();
+        private string _studentFio;
 
         public Student()
         {
             InitializeComponent();
         }
 
-        private void Student_Load(object sender, System.EventArgs e)
+        private void Student_Load(object sender, EventArgs e)
         {
-            studentFio = Person.fio;
-
-            // вывод приветствия пользователю
-            WelcomeLabel.Text = $"Здравствуйте, {studentFio}";
+            _studentFio = Person.Fio;
+            WelcomeLabel.Text = $"Здравствуйте, {_studentFio}";
 
             var request = "select предмет from предметы";
-            comboBoxContent = DataFill.RequestToList(request);
+            _comboBoxContent = DataFill.RequestToList(request);
 
-            DataFill.UpdateComboBox(SubjectComboBox, comboBoxContent, 0);
+            DataFill.UpdateComboBox(SubjectComboBox, _comboBoxContent, 0);
 
             UpdateData();
         }
 
         private void UpdateData()
         {
-            // тернарный оператор ?. Если значение SelectedItem != null, то в переменную записывается значение из комбобокса.
-            // В противном случае в нее записывается null
-            var letter = SubjectComboBox.SelectedItem != null ? comboBoxContent[SubjectComboBox.SelectedIndex][0] : null;
+            var letter = DataFill.GetComboBoxValue(SubjectComboBox, _comboBoxContent, 0);
             var exam = ExamCheckBox.Checked;
-
-            // на основе значений переменных, при помощи тернарного оператора cоздаются фильтры 
+            
             var letterFilter = letter != null ? $"and Предметы.Предмет = '{letter}'" : "";
 
             var request = $"SELECT Предметы.Предмет, Оценка, Четверть, Экзамен " +
@@ -46,7 +41,7 @@ namespace SchoolKursach.Forms
              $"JOIN Пользователи ON Ученики.[ID Пользователя] = Пользователи.ID " +
              $"JOIN План ON Оценки.[ID Плана] = План.ID " +
              $"JOIN Предметы ON План.[ID Предмета] = Предметы.ID " +
-             $"WHERE Пользователи.ФИО = '{studentFio}' AND Оценки.Экзамен = '{exam}' {letterFilter}";
+             $"WHERE Пользователи.ФИО = '{_studentFio}' AND Оценки.Экзамен = '{exam}' {letterFilter}";
 
             try
             {
@@ -59,8 +54,7 @@ namespace SchoolKursach.Forms
                 MessageBox.Show(ex.Message, "Ошибка");
             }
         }
-
-        // вызов метода для выборки данных при изменении выбранного элемента в комбобоксе или чекбоксе
+        
         private void SubjectComboBox_SelectedIndexChanged(object sender, EventArgs e) => UpdateData();
 
         private void ExamCheckBox_Click(object sender, EventArgs e) => UpdateData();
@@ -73,7 +67,6 @@ namespace SchoolKursach.Forms
             UpdateData();
         }
 
-        // выход с формы
         private void ExitButton_Click(object sender, EventArgs e)
         {
             var form = new Auth();

@@ -7,12 +7,12 @@ namespace SchoolKursach.Forms
 {
     public partial class Teacher : Form
     {
-        List<string[]> subjectComboBoxContent = new List<string[]>();
-        List<string[]> letterComboBoxContent = new List<string[]>();
-        List<string[]> numberComboBoxContent = new List<string[]>();
-        List<string[]> studentComboBoxContent = new List<string[]>();
+        private List<string[]> _subjectComboBoxContent = new List<string[]>();
+        private List<string[]> _letterComboBoxContent = new List<string[]>();
+        private List<string[]> _numberComboBoxContent = new List<string[]>();
+        private List<string[]> _studentComboBoxContent = new List<string[]>();
 
-        string teacherFio;
+        private string _teacherFio;
 
         public Teacher()
         {
@@ -21,38 +21,30 @@ namespace SchoolKursach.Forms
 
         private void Teacher_Load(object sender, EventArgs e)
         {
-            // установка максимального количества символов для текстбокса
             AssessmentTextBox.MaxLength = 1;
             NewAssessmentTextBox.MaxLength = 1;
 
-            teacherFio = Person.fio;
+            _teacherFio = Person.Fio;
+            
+            WelcomeLabel.Text = $"Здравствуйте, {_teacherFio}";
 
-            // вывод приветствия пользователю
-            WelcomeLabel.Text = $"Здравствуйте, {teacherFio}";
-
-            // вызово метода обновления комбобоксов
             UpdateComboBoxData();
 
-            // вызов метода обновления таблицы
             UpdateData();
         }
 
         #region Utilities
-
-        // значение по умолчанию для обновления комбобокса с именами студентов
+        
         private void UpdateData(bool updateStudentsComboBox = true)
         {
-            // тернарный оператор ?. Если значение SelectedItem != null, то в переменную записывается значение из комбобокса.
-            // В противном случае в нее записывается null
-            var letter = LetterComboBox.SelectedItem != null ? letterComboBoxContent[LetterComboBox.SelectedIndex][0] : null;
-            var number = NumberComboBox.SelectedItem != null ? numberComboBoxContent[NumberComboBox.SelectedIndex][0] : null;
-            var subject = SubjectComboBox.SelectedItem != null ? subjectComboBoxContent[SubjectComboBox.SelectedIndex][0] : null;
-            var student = StudentComboBox.SelectedItem != null ? studentComboBoxContent[StudentComboBox.SelectedIndex][0] : null;
-            var quarter = QuarterComboBox.SelectedItem != null ? QuarterComboBox.SelectedItem.ToString() : null;
+            var letter = DataFill.GetComboBoxValue(LetterComboBox, _letterComboBoxContent, 0);
+            var number = DataFill.GetComboBoxValue(NumberComboBox, _numberComboBoxContent, 0); 
+            var subject = DataFill.GetComboBoxValue(SubjectComboBox, _subjectComboBoxContent, 0);
+            var student = DataFill.GetComboBoxValue(StudentComboBox, _studentComboBoxContent, 0);
+            var quarter = QuarterComboBox.SelectedItem?.ToString();
 
             var exam = ExamsCheckBox.Checked;
-
-            // на основе значений переменных, при помощи тернарного оператора cоздаются фильтры 
+            
             var letterFilter = letter != null ? $"Классы.Буква = '{letter}'" : "1=1";
             var numberFilter = number != null ? $"Классы.Класс = {number}" : "1=1";
             var subjectFilter = subject != null ? $"Предметы.Предмет = '{subject}'" : "1=1";
@@ -61,7 +53,6 @@ namespace SchoolKursach.Forms
 
             if (updateStudentsComboBox)
             {
-                // запрос для обновления комбобокса учеников
                 var studentsComboBoxRequest = $"select distinct Пользователи.фио from Пользователи " +
                     $"join Ученики on Ученики.[ID Пользователя] = Пользователи.ID " +
                     $"join Классы on Ученики.[ID Класса] = Классы.Id " +
@@ -73,11 +64,10 @@ namespace SchoolKursach.Forms
                     $"and {subjectFilter} " +
                     $"order by Пользователи.фио";
 
-                studentComboBoxContent = DataFill.RequestToList(studentsComboBoxRequest);
-                DataFill.UpdateComboBox(StudentComboBox, studentComboBoxContent, 0);
+                _studentComboBoxContent = DataFill.RequestToList(studentsComboBoxRequest);
+                DataFill.UpdateComboBox(StudentComboBox, _studentComboBoxContent, 0);
             }
-
-            // запрос на вывод данных
+            
             var request = $"select distinct Оценки.Id, Пользователи.ФИО as Ученики, Предметы.Предмет, Оценка, " +
                  $"Классы.Буква, Классы.Класс, Оценки.Экзамен, Оценки.Четверть " +
                  $"from Оценки " +
@@ -90,7 +80,7 @@ namespace SchoolKursach.Forms
                  $"and {subjectFilter} " +
                  $"and {studentFilter} " +
                  $"and {quarterFilter} " +
-                 $"and План.[ID Учителя] = (select id from Пользователи where ФИО = '{teacherFio}') " +
+                 $"and План.[ID Учителя] = (select id from Пользователи where ФИО = '{_teacherFio}') " +
                  $"and Оценки.Экзамен = '{exam}'";
 
             try
@@ -105,28 +95,22 @@ namespace SchoolKursach.Forms
 
         private void UpdateComboBoxData()
         {
-            // запрос на получение учеников
             var studentsComboBoxRequest = "select фио from Пользователи where [id должности] = 3 order by фио";
-            // запрос на получение букв классов
             var letterComboBoxRequest = "Select distinct Буква from Классы";
-            // запрос на получение номера классов
             var numberComboBoxRequest = "Select distinct Класс from Классы";
-            // запрос на получение предметов конкретного учителя
             var subjectComboBoxRequest = $"SELECT distinct Предмет FROM Предметы, План " +
                 $"WHERE Предметы.ID = План.[ID Предмета] " +
-                $"and План.[ID Учителя] = (select id from Пользователи where ФИО = '{teacherFio}') ";
-
-            // запись данных в список массивов
-            studentComboBoxContent = DataFill.RequestToList(studentsComboBoxRequest);
-            letterComboBoxContent = DataFill.RequestToList(letterComboBoxRequest);
-            numberComboBoxContent = DataFill.RequestToList(numberComboBoxRequest);
-            subjectComboBoxContent = DataFill.RequestToList(subjectComboBoxRequest);
-
-            // передача данных в комбобокс
-            DataFill.UpdateComboBox(StudentComboBox, studentComboBoxContent, 0);
-            DataFill.UpdateComboBox(LetterComboBox, letterComboBoxContent, 0);
-            DataFill.UpdateComboBox(NumberComboBox, numberComboBoxContent, 0);
-            DataFill.UpdateComboBox(SubjectComboBox, subjectComboBoxContent, 0);
+                $"and План.[ID Учителя] = (select id from Пользователи where ФИО = '{_teacherFio}') ";
+            
+            _studentComboBoxContent = DataFill.RequestToList(studentsComboBoxRequest);
+            _letterComboBoxContent = DataFill.RequestToList(letterComboBoxRequest);
+            _numberComboBoxContent = DataFill.RequestToList(numberComboBoxRequest);
+            _subjectComboBoxContent = DataFill.RequestToList(subjectComboBoxRequest);
+            
+            DataFill.UpdateComboBox(StudentComboBox, _studentComboBoxContent, 0);
+            DataFill.UpdateComboBox(LetterComboBox, _letterComboBoxContent, 0);
+            DataFill.UpdateComboBox(NumberComboBox, _numberComboBoxContent, 0);
+            DataFill.UpdateComboBox(SubjectComboBox, _subjectComboBoxContent, 0);
 
             try
             {
@@ -144,35 +128,21 @@ namespace SchoolKursach.Forms
         {
             var number = e.KeyChar;
 
-            // Проверяем, является ли клавиша Backspace
             if (number == (char)Keys.Back)
-            {
-                // Разрешаем ввод символа
                 return;
-            }
 
-            // если это id текстбокс то разрешаем вводить любые цифры
             if (isIdTextBox && char.IsDigit(number))
-            {
-                // Разрешаем ввод символа
                 return;
-            }
-
-            // Проверяем, является ли клавиша допустимой цифрой
+            
             if (number >= '2' && number <= '5')
-            {
-                // Разрешаем ввод символа
                 return;
-            }
-
-            // Отменяем событие и предотвращаем ввод символа
+            
             e.Handled = true;
         }
 
         #endregion
 
         #region Buttons
-        // кнопка изменения
         private void ChangeButton_Click(object sender, EventArgs e)
         {
             try
@@ -196,8 +166,7 @@ namespace SchoolKursach.Forms
                 MessageBox.Show(ex.Message, "Ошибка");
             }
         }
-
-        // кнопка удаления
+        
         private void DeleteButton_Click(object sender, EventArgs e)
         {
             try
@@ -220,22 +189,18 @@ namespace SchoolKursach.Forms
                 MessageBox.Show(ex.Message, "Ошибка");
             }
         }
-
-        // кнопка добавления
+        
         private void AddButton_Click(object sender, EventArgs e)
         {
             try
             {
-                // тернарный оператор ?. Если значение SelectedItem != null, то в переменную записывается значение из комбобокса.
-                // В противном случае в нее записывается null
-                var subject = SubjectComboBox.SelectedItem != null ? subjectComboBoxContent[SubjectComboBox.SelectedIndex][0] : null;
-                var student = StudentComboBox.SelectedItem != null ? studentComboBoxContent[StudentComboBox.SelectedIndex][0] : null;
-                var quarter = QuarterComboBox.SelectedItem != null ? QuarterComboBox.SelectedItem.ToString() : null;
+                var subject = DataFill.GetComboBoxValue(SubjectComboBox, _subjectComboBoxContent, 0);
+                var student = DataFill.GetComboBoxValue(StudentComboBox, _studentComboBoxContent, 0);
+                var quarter = QuarterComboBox.SelectedItem?.ToString();
 
                 var exam = ExamsCheckBox.Checked;
                 var assessment = AssessmentTextBox.Text;
-
-                // проверка на пустые значения
+                
                 if (string.IsNullOrEmpty(subject) || string.IsNullOrEmpty(assessment) 
                     || string.IsNullOrEmpty(student) || string.IsNullOrEmpty(quarter))
                 {
@@ -275,8 +240,7 @@ namespace SchoolKursach.Forms
         #endregion
 
         #region Events
-
-        // вызов метода для обновления данных при изменении выбранного элемента в комбобоксе или чекбоксе
+        
         private void LetterComboBox_SelectedIndexChanged(object sender, EventArgs e) => UpdateData();
 
         private void NumberComboBox_SelectedIndexChanged(object sender, EventArgs e) => UpdateData();
@@ -301,8 +265,7 @@ namespace SchoolKursach.Forms
 
             UpdateData();
         }
-
-        // вызов проверки на цифры при вводе данных в текстбоксы
+        
         private void AssessmentTextBox_KeyPress(object sender, KeyPressEventArgs e) => CheckDigits(e);
 
         private void NewAssessmentTextBox_KeyPress(object sender, KeyPressEventArgs e) => CheckDigits(e);

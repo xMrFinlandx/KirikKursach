@@ -7,17 +7,17 @@ namespace SchoolKursach.Forms
 {
     public partial class AddChanges : Form
     {
-        List<string[]> subjectComboBoxContent = new List<string[]>();
-        List<string[]> teacherComboBoxContent = new List<string[]>();
+        private List<string[]> _subjectComboBoxContent = new List<string[]>();
+        private List<string[]> _teacherComboBoxContent = new List<string[]>();
 
-        List<string[]> roleComboBoxContent = new List<string[]>();
+        private List<string[]> _roleComboBoxContent = new List<string[]>();
 
-        List<string[]> letterComboBoxContent = new List<string[]>();
-        List<string[]> numberComboBoxContent = new List<string[]>();
+        private List<string[]> _letterComboBoxContent = new List<string[]>();
+        private List<string[]> _numberComboBoxContent = new List<string[]>();
 
-        int tableId = 0;
+        private int _tableId = 0;
 
-        bool isStudent = false;
+        private bool _isStudent = false;
 
         public AddChanges()
         {
@@ -26,7 +26,6 @@ namespace SchoolKursach.Forms
 
         private void AddChanges_Load(object sender, EventArgs e)
         {
-            // установление статусов отображения для груп боксов
             AddPlanGroupBox.Visible = false;
             AddSubjectGroupBox.Visible = false;
             AddUserGroupBox.Visible = true;
@@ -38,24 +37,27 @@ namespace SchoolKursach.Forms
         {
             var tableRequest = "";
 
-            if (tableId < 0)
-            {
-                tableId = 3;
-            }
+            if (_tableId < 0)
+                _tableId = 3;
 
-            if (tableId > 3)
-            {
-                tableId = 0;
-            }
+            if (_tableId > 3)
+                _tableId = 0;
 
-            if (tableId == 0)
-                tableRequest = ShowUsers();
-            else if (tableId == 1)
-                tableRequest = ShowStudents();
-            else if (tableId == 2)
-                tableRequest = ShowSubjects();
-            else if (tableId == 3)
-                tableRequest = ShowPlan();
+            switch (_tableId)
+            {
+                case 0:
+                    tableRequest = ShowUsers();
+                    break;
+                case 1:
+                    tableRequest = ShowStudents();
+                    break;
+                case 2:
+                    tableRequest = ShowSubjects();
+                    break;
+                case 3:
+                    tableRequest = ShowPlan();
+                    break;
+            }
 
             DataFill.UpdateDataGrid(DataTableView, tableRequest);
         }
@@ -64,10 +66,8 @@ namespace SchoolKursach.Forms
 
         private string ShowUsers()
         {
-            // изменение заголовка
             TableNameLabel.Text = "Пользователи";
-
-            // установление статусов отображения для груп боксов
+            
             AddPlanGroupBox.Visible = false;
             AddSubjectGroupBox.Visible = false;
             AddUserGroupBox.Visible = true;
@@ -85,10 +85,8 @@ namespace SchoolKursach.Forms
 
         private string ShowStudents()
         {
-            // изменение заголовка
             TableNameLabel.Text = "Ученики";
-
-            // установление статусов отображения для груп боксов
+            
             AddPlanGroupBox.Visible = false;
             AddSubjectGroupBox.Visible = false;
             AddUserGroupBox.Visible = true;
@@ -106,10 +104,8 @@ namespace SchoolKursach.Forms
 
         private string ShowSubjects()
         {
-            // изменение заголовка
             TableNameLabel.Text = "Предметы";
-
-            // установление статусов отображения для груп боксов
+            
             AddPlanGroupBox.Visible = false;
             AddSubjectGroupBox.Visible = true;
             AddUserGroupBox.Visible = false;
@@ -121,10 +117,8 @@ namespace SchoolKursach.Forms
 
         private string ShowPlan()
         {
-            // изменение заголовка
             TableNameLabel.Text = "План";
-
-            // установление статусов отображения для груп боксов
+            
             AddPlanGroupBox.Visible = true;
             AddSubjectGroupBox.Visible = false;
             AddUserGroupBox.Visible = false;
@@ -146,41 +140,35 @@ namespace SchoolKursach.Forms
 
         private void FillPlanComboBoxes()
         {
-            // запросы для получения данных для комбобоксов
             var teacherComboBoxRequest = "select ФИО from пользователи where [Id должности] = 2";
             var subjectComboBoxRequest = "select Предмет from предметы";
             var letterComboBoxRequest = "Select distinct Буква from Классы";
             var numberComboBoxRequest = "Select distinct Класс from Классы";
+            
+            _teacherComboBoxContent = DataFill.RequestToList(teacherComboBoxRequest);
+            _subjectComboBoxContent = DataFill.RequestToList(subjectComboBoxRequest);
+            _letterComboBoxContent = DataFill.RequestToList(letterComboBoxRequest);
+            _numberComboBoxContent = DataFill.RequestToList(numberComboBoxRequest);
 
-            // получение данных из запроса и запись в список массивов
-            teacherComboBoxContent = DataFill.RequestToList(teacherComboBoxRequest);
-            subjectComboBoxContent = DataFill.RequestToList(subjectComboBoxRequest);
-            letterComboBoxContent = DataFill.RequestToList(letterComboBoxRequest);
-            numberComboBoxContent = DataFill.RequestToList(numberComboBoxRequest);
-
-            // обновление данных комбобоксов
-            DataFill.UpdateComboBox(TeacherComboBox, teacherComboBoxContent, 0);
-            DataFill.UpdateComboBox(SubjectComboBox, subjectComboBoxContent, 0);
-            DataFill.UpdateComboBox(PlanLetterComboBox, letterComboBoxContent, 0);
-            DataFill.UpdateComboBox(PlanNumberComboBox, numberComboBoxContent, 0);
+            DataFill.UpdateComboBox(TeacherComboBox, _teacherComboBoxContent, 0);
+            DataFill.UpdateComboBox(SubjectComboBox, _subjectComboBoxContent, 0);
+            DataFill.UpdateComboBox(PlanLetterComboBox, _letterComboBoxContent, 0);
+            DataFill.UpdateComboBox(PlanNumberComboBox, _numberComboBoxContent, 0);
         }
 
         private void FillUsersComboBox()
         {
-            // запросы для получения данных для комбобоксов
             var roleComboBoxRequest = "select Должность from Должности";
             var letterComboBoxRequest = "Select distinct Буква from Классы";
             var numberComboBoxRequest = "Select distinct Класс from Классы";
 
-            // получение данных из запроса и запись в список массивов
-            roleComboBoxContent = DataFill.RequestToList(roleComboBoxRequest);
-            letterComboBoxContent = DataFill.RequestToList(letterComboBoxRequest);
-            numberComboBoxContent = DataFill.RequestToList(numberComboBoxRequest);
+            _roleComboBoxContent = DataFill.RequestToList(roleComboBoxRequest);
+            _letterComboBoxContent = DataFill.RequestToList(letterComboBoxRequest);
+            _numberComboBoxContent = DataFill.RequestToList(numberComboBoxRequest);
 
-            // обновление данных комбобоксов
-            DataFill.UpdateComboBox(RoleComboBox, roleComboBoxContent, 0);
-            DataFill.UpdateComboBox(LetterComboBox, letterComboBoxContent, 0);
-            DataFill.UpdateComboBox(NumberComboBox, numberComboBoxContent, 0);
+            DataFill.UpdateComboBox(RoleComboBox, _roleComboBoxContent, 0);
+            DataFill.UpdateComboBox(LetterComboBox, _letterComboBoxContent, 0);
+            DataFill.UpdateComboBox(NumberComboBox, _numberComboBoxContent, 0);
         }
 
         #endregion
@@ -211,38 +199,31 @@ namespace SchoolKursach.Forms
 
         private void AddUser()
         {
-            // тернарный оператор ?. Если значение SelectedItem != null, то в переменную записывается значение из комбобокса.
-            // В противном случае в нее записывается null
-            var letter = LetterComboBox.SelectedItem != null ? letterComboBoxContent[LetterComboBox.SelectedIndex][0] : null;
-            var number = NumberComboBox.SelectedItem != null ? numberComboBoxContent[NumberComboBox.SelectedIndex][0] : null;
+            var letter = DataFill.GetComboBoxValue(LetterComboBox, _letterComboBoxContent, 0);
+            var number = DataFill.GetComboBoxValue(NumberComboBox, _numberComboBoxContent, 0);
 
-            var role = RoleComboBox.SelectedItem != null ? roleComboBoxContent[RoleComboBox.SelectedIndex][0] : null;
+            var role = DataFill.GetComboBoxValue(RoleComboBox, _roleComboBoxContent, 0); 
             var fio = FIOTextBox.Text;
             var login = LoginTextBox.Text;
             var pass = PassTextBox.Text;
 
             try
             {
-                // проверка на пустые значения
                 if (string.IsNullOrEmpty(role) || string.IsNullOrEmpty(fio) || string.IsNullOrEmpty(login) || string.IsNullOrEmpty(pass))
                     throw new Exception("Поля Роль, Фамилия, Логин и Пароль должны быть заполнены");
-
-                // если добавляется ученик
-                if (isStudent)
+                
+                if (_isStudent)
                 {
                     if (string.IsNullOrEmpty(letter) || string.IsNullOrEmpty(number))
                         throw new Exception("Для роли Ученик, поля Буква и Класс должны быть заполнены");
                 }
-
-                // запрос на добавление новой записи в базу данных с хешированием пароля и получение ID этой записи
+                
                 var request = $"insert into Пользователи output inserted.ID " +
                     $"values ((select id from Должности where Должность = '{role}') , '{fio}', '{login}',  HASHBYTES('SHA2_256', '{pass}'))";
-
-                // получение id добавленной записи
+                
                 var id = DataFill.ApplyRequestAndGetID(request);
-
-                // если это студент, то он добавляется в класс
-                if (isStudent)
+                
+                if (_isStudent)
                 {
                     request = $"insert into Ученики " +
                     $"values ({id}, (select id from Классы where Буква = '{letter}' and Класс = {number}))";
@@ -262,20 +243,16 @@ namespace SchoolKursach.Forms
 
         private void AddPlan()
         {
-            // тернарный оператор ?. Если значение SelectedItem != null, то в переменную записывается значение из комбобокса.
-            // В противном случае в нее записывается null
-            var letter = PlanLetterComboBox.SelectedItem != null ? letterComboBoxContent[PlanLetterComboBox.SelectedIndex][0] : null;
-            var number = PlanNumberComboBox.SelectedItem != null ? numberComboBoxContent[PlanNumberComboBox.SelectedIndex][0] : null;
-            var teacher = TeacherComboBox.SelectedItem != null ? teacherComboBoxContent[TeacherComboBox.SelectedIndex][0] : null;
-            var subject = SubjectComboBox.SelectedItem != null ? subjectComboBoxContent[SubjectComboBox.SelectedIndex][0] : null;
+            var letter = DataFill.GetComboBoxValue(PlanLetterComboBox, _letterComboBoxContent, 0);
+            var number = DataFill.GetComboBoxValue(PlanNumberComboBox, _numberComboBoxContent, 0);
+            var teacher = DataFill.GetComboBoxValue(TeacherComboBox, _teacherComboBoxContent, 0); 
+            var subject = DataFill.GetComboBoxValue(SubjectComboBox, _subjectComboBoxContent, 0);
 
             try
             {
-                // проверка на пустые значения
                 if (string.IsNullOrEmpty(teacher) || string.IsNullOrEmpty(subject) || string.IsNullOrEmpty(letter) || string.IsNullOrEmpty(number))
                     throw new Exception("Поля Класса, Учителя и Предмета должны быть заполнены");
-
-                // запрос на добавление с получением необходимых id на основе введенных данных
+                
                 var request = $"insert into План values " +
                     $"((select id from Классы where Буква = '{letter}' and Класс = {number}), " +
                     $"(select id from Предметы where Предмет = '{subject}'), " +
@@ -299,13 +276,13 @@ namespace SchoolKursach.Forms
 
         private void PreviousTableButton_Click(object sender, EventArgs e)
         {
-            tableId--;
+            _tableId--;
             ShowData();
         }
 
         private void NextTableButton_Click(object sender, EventArgs e)
         {
-            tableId++;
+            _tableId++;
             ShowData();
         }
 
@@ -323,13 +300,13 @@ namespace SchoolKursach.Forms
 
             var deleteRequest = "";
 
-            if (tableId == 0)
-                deleteRequest = $"delete from Пользователи where id = {id} and ФИО != '{Person.fio}'";
-            else if (tableId == 1)
+            if (_tableId == 0)
+                deleteRequest = $"delete from Пользователи where id = {id} and ФИО != '{Person.Fio}'";
+            else if (_tableId == 1)
                 deleteRequest = $"delete from Ученики where id = {id}";
-            else if (tableId == 2)
+            else if (_tableId == 2)
                 deleteRequest = $"delete from Предметы where id = {id}";
-            else if (tableId == 3)
+            else if (_tableId == 3)
                 deleteRequest = $"delete from План where id = {id}";
 
             try
@@ -348,24 +325,21 @@ namespace SchoolKursach.Forms
 
         private void AddButton_Click(object sender, EventArgs e)
         {
-            if (tableId == 0 || tableId == 1)
+            if (_tableId == 0 || _tableId == 1)
                 AddUser();
-            else if (tableId == 2)
+            else if (_tableId == 2)
                 AddSubject();
-            else if (tableId == 3)
+            else if (_tableId == 3)
                 AddPlan();
         }
 
         private void RoleComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // установление значения для флага isStudent на основе выбранной роли
-            isStudent = RoleComboBox.SelectedItem.ToString() == "Ученик";
-
-            // установление статуса отображения GroupBox с выбором класса на основе значения флага isStudent
-            ClassGroupBox.Enabled = isStudent;
+            _isStudent = RoleComboBox.SelectedItem.ToString() == "Ученик";
+            
+            ClassGroupBox.Enabled = _isStudent;
         }
-
-        // вызов метода проверки введенного символа 
+        
         private void HoursTextBox_KeyPress(object sender, KeyPressEventArgs e) => CheckDigits(e);
 
         private void DeleteIdTextBox_KeyPress(object sender, KeyPressEventArgs e) => CheckDigits(e);
@@ -374,12 +348,8 @@ namespace SchoolKursach.Forms
         {
             var number = e.KeyChar;
 
-            // Проверяем, является ли клавиша Backspace или цифрой
             if (number == (char)Keys.Back || char.IsDigit(number))
-            {
-                // Разрешаем ввод символа
                 return;
-            }
 
             e.Handled = true;
         }

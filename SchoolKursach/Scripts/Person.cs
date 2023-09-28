@@ -1,7 +1,8 @@
 ﻿namespace SchoolKursach.Scripts
 {
-    class Person
+    public static class Person
     {
-        public static string id, roleId, fio;
+        public static string RoleId;
+        public static string Fio;
     }
 }

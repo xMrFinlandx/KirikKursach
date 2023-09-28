@@ -8,7 +8,7 @@ namespace SchoolKursach.Forms
 {
     public partial class Auth : Form
     {
-        SqlDataAdapter sqlDataAdapter = new SqlDataAdapter();
+        private SqlDataAdapter _sqlDataAdapter = new SqlDataAdapter();
 
         public Auth()
         {
@@ -17,20 +17,16 @@ namespace SchoolKursach.Forms
 
         private void Auth_Load(object sender, EventArgs e)
         {
-            // скрывает пароль
             PassTextBox.UseSystemPasswordChar = true;
         }
 
         private void LogInButton_Click(object sender, EventArgs e)
         {
-            // получение логина и пароля из текстбоксов
             var login = LoginTextBox.Text;
             var pass = PassTextBox.Text;
-
-            // передача логина и пароля в метод, который вернет ID должности 
+            
             var roleId = GetRoleID(login, pass);
 
-            // Открытие формы на основе Id работника и закрытие текущей
             if (roleId == 1)
             {
                 var form = new Director();
@@ -66,29 +62,26 @@ namespace SchoolKursach.Forms
                     throw new Exception("Поле Пароль должно быть заполнено");
 
                 var dataTable = new DataTable();
-
-                // запрос, который получит айди, должность, фио на основе введенных логина и пароля
+                
                 var request = $"select id, [ID Должности], фио from Пользователи where Логин = '{login}' and Пароль = HASHBYTES('SHA2_256', '{pass}')";
 
                 var command = new SqlCommand(request, Connection.GetSqlConnection());
 
-                sqlDataAdapter.SelectCommand = command;
-                sqlDataAdapter.Fill(dataTable);
+                _sqlDataAdapter.SelectCommand = command;
+                _sqlDataAdapter.Fill(dataTable);
 
                 Connection.OpenConnection();
 
                 var reader = command.ExecuteReader();
 
                 var roleId = -1;
-
-                // запись полученных данных в статический класс
+                
                 while (reader.Read())
                 {
-                    Person.id = reader.GetValue(0).ToString();
-                    Person.roleId = reader.GetValue(1).ToString();
-                    Person.fio = (string)reader.GetValue(2);
+                    Person.RoleId = reader.GetValue(1).ToString();
+                    Person.Fio = (string)reader.GetValue(2);
 
-                    roleId = Convert.ToInt32(Person.roleId);
+                    roleId = Convert.ToInt32(Person.RoleId);
                 }
 
                 Connection.CloseConnection();

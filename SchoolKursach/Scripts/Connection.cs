@@ -4,27 +4,24 @@ namespace SchoolKursach.Scripts
 {
     public static class Connection
     {
-        static SqlConnection connection =
+        private static readonly SqlConnection _connection =
           new SqlConnection("Data Source = DESKTOP-QRTRTU4; Initial catalog = Школа; Integrated Security = True");
-
-        // открывает соединение
+        
         public static void OpenConnection()
         {
-            if (connection.State == System.Data.ConnectionState.Closed)
-                connection.Open();
+            if (_connection.State == System.Data.ConnectionState.Closed)
+                _connection.Open();
         }
-
-        // закрывает соединение
+        
         public static void CloseConnection()
         {
-            if (connection.State == System.Data.ConnectionState.Open)
-                connection.Close();
+            if (_connection.State == System.Data.ConnectionState.Open)
+                _connection.Close();
         }
 
-        // возвращает строку подключения
         public static SqlConnection GetSqlConnection()
         {
-            return connection;
+            return _connection;
         }
     }
 }
